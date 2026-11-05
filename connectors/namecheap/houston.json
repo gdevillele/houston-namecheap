@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "name": "Namecheap",
+  "files": [
+    "connector.luau"
+  ],
+  "icon": "icon.svg",
+  "config": {
+    "access": {
+      "default": "read-only",
+      "label": "Access",
+      "options": [
+        {
+          "label": "Read-only",
+          "value": "read-only"
+        },
+        {
+          "label": "Read and change DNS records",
+          "value": "read-write"
+        }
+      ],
+      "order": 1,
+      "type": "string"
+    },
+    "api_host": {
+      "default": "api.namecheap.com",
+      "description": "Use Sandbox only with an account created on sandbox.namecheap.com.",
+      "label": "Environment",
+      "options": [
+        {
+          "label": "Production",
+          "value": "api.namecheap.com"
+        },
+        {
+          "label": "Sandbox",
+          "value": "api.sandbox.namecheap.com"
+        }
+      ],
+      "order": 2,
+      "required": true,
+      "type": "string"
+    },
+    "username": {
+      "description": "The username you sign in to Namecheap with.",
+      "label": "Namecheap username",
+      "max_length": 64,
+      "order": 3,
+      "required": true,
+      "type": "string"
+    },
+    "client_ip": {
+      "description": "The IPv4 address Houston connects to Namecheap from. Whitelist the same address in Namecheap's API settings.",
+      "label": "Whitelisted IP address",
+      "max_length": 15,
+      "order": 4,
+      "placeholder": "203.0.113.7",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "auth": {
+    "token": {
+      "type": "manual",
+      "label": "API key",
+      "config": {
+        "token": {
+          "label": "API key",
+          "required": true,
+          "type": "secret"
+        }
+      }
+    }
+  },
+  "proxy": [
+    {
+      "match": {
+        "protocol": "http",
+        "host": [
+          "{{config.api_host}}"
+        ],
+        "method": [
+          "GET"
+        ],
+        "path": [
+          "/xml.response"
+        ]
+      },
+      "action": {
+        "headers": {
+          "remove": [
+            "Authorization",
+            "Cookie",
+            "X-HTTP-Method-Override",
+            "X-HTTP-Method",
+            "X-Method-Override"
+          ]
+        },
+        "query": {
+          "ApiKey": "{{auth.token.token}}"
+        }
+      }
+    },
+    {
+      "if": "{{ is config.access \"read-write\" }}",
+      "match": {
+        "protocol": "http",
+        "host": [
+          "{{config.api_host}}"
+        ],
+        "method": [
+          "POST"
+        ],
+        "path": [
+          "/xml.response"
+        ]
+      },
+      "action": {
+        "headers": {
+          "remove": [
+            "Authorization",
+            "Cookie",
+            "X-HTTP-Method-Override",
+            "X-HTTP-Method",
+            "X-Method-Override"
+          ]
+        },
+        "query": {
+          "ApiKey": "{{auth.token.token}}"
+        }
+      }
+    }
+  ]
+}
