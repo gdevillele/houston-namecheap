@@ -38,7 +38,7 @@
           "value": "api.sandbox.namecheap.com"
         }
       ],
-      "order": 2,
+      "order": 1,
       "required": true,
       "type": "string"
     },
@@ -46,7 +46,7 @@
       "description": "The username you sign in to Namecheap with.",
       "label": "Namecheap username",
       "max_length": 64,
-      "order": 3,
+      "order": 2,
       "required": true,
       "type": "string"
     },
@@ -54,7 +54,7 @@
       "description": "The IPv4 address Houston connects to Namecheap from. Whitelist the same address in Namecheap's API settings.",
       "label": "Whitelisted IP address",
       "max_length": 15,
-      "order": 4,
+      "order": 3,
       "placeholder": "203.0.113.7",
       "required": true,
       "type": "string"
